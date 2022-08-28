@@ -1,10 +1,13 @@
 # When updating to a newer version, check if the version of `esp32-toolchain-bin.nix` also needs to be updated.
-{ rev ? "v4.3.1"
-, sha256 ? "sha256-+SMdnIBSCdHy+MDbInl/aXJuXOf9seJbQ3u4mN+qFP4="
+{ rev ? "v5.0-beta1"
+, sha256 ? "sha256-qjhzjse86Nnq1JBH24nVXqo+i9Iop4K6lIa3MKYDJrc="
 , stdenv
 , lib
 , fetchFromGitHub
 , mach-nix
+
+, idf-component-manager
+, esp-coredump
 }:
 
 let
@@ -18,20 +21,32 @@ let
 
   pythonEnv =
     let
-      # Remove things from requirements.txt that aren't necessary and mach-nix can't parse:
-      # - Comment out Windows-specific "file://" line.
-      # - Comment out ARMv7-specific "--only-binary" line.
-      requirementsOriginalText = builtins.readFile "${src}/tools/requirements/requirements.core.txt";
-      requirementsText = builtins.replaceStrings
-        [ "file://" "--only-binary" ]
-        [ "#file://" "#--only-binary" ]
-        requirementsOriginalText;
+      #requirementsText = builtins.readFile "${src}/tools/requirements/requirements.core.txt";
+      # N.B. idf-component-manager has broken version in its requirements
+      requirementsText = ''
+        setuptools
+        click
+        pyserial
+        future
+        cryptography
+        pyparsing
+        pyelftools
+        #idf-component-manager
+        esp-coredump
+        esptool
+        kconfiglib
+        freertos_gdb
+      '';
     in
     mach-nix.mkPython
       {
         requirements = requirementsText + ''
           construct >= 2.9
         '';
+        packagesExtra = [
+          idf-component-manager
+          esp-coredump
+        ];
       };
 in
 stdenv.mkDerivation rec {
@@ -52,7 +67,7 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out
-    cp -r $src/* $out/
+    cp -r ./* $out/
 
     # Link the Python environment in so that in shell derivations, the Python
     # setup hook will add the site-packages directory to PYTHONPATH.

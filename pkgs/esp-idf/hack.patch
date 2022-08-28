@@ -1,8 +1,16 @@
 diff --git a/tools/idf_tools.py b/tools/idf_tools.py
-index 74dce94bb0..b1ef9ac718 100755
+index 13073e3e48..5f5c07f8b4 100755
 --- a/tools/idf_tools.py
 +++ b/tools/idf_tools.py
-@@ -1570,6 +1570,7 @@ def get_constraints(idf_version):  # type: (str) -> str
+@@ -1142,6 +1142,7 @@ class IDFEnv:
+         return self.__str__()
+ 
+     def save(self) -> None:
++        return
+         try:
+             if global_idf_tools_path:  # mypy fix for Optional[str] in the next call
+                 # the directory doesn't exist if this is run on a clean system the first time
+@@ -1949,6 +1950,7 @@ def install_legacy_python_virtualenv(path):  # type: (str) -> None
  
  
  def action_install_python_env(args):  # type: ignore
@@ -10,3 +18,11 @@ index 74dce94bb0..b1ef9ac718 100755
      use_constraints = not args.no_constraints
      reinstall = args.reinstall
      idf_python_env_path, _, virtualenv_python, idf_version = get_python_env_path()
+@@ -2027,6 +2029,7 @@ def action_install_python_env(args):  # type: ignore
+ 
+ 
+ def action_check_python_dependencies(args):  # type: ignore
++    return
+     use_constraints = not args.no_constraints
+     req_paths = get_requirements('')  # no new features -> just detect the existing ones
+ 

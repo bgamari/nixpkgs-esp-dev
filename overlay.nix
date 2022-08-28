@@ -4,24 +4,28 @@ let
   mach-nix-src = prev.fetchFromGitHub {
     owner = "DavHau";
     repo = "mach-nix";
-    rev = "98d001727542bb6142d0ab554fc30bd591b07c73";
-    hash = "sha256-SXrwF/KPz8McBN8kN+HTfGphE1hiRSr1mtXSVjPJr8o=";
+    rev = "6cd3929b1561c3eef68f5fc6a08b57cf95c41ec1";
+    hash = "sha256-BRz30Xg/g535oRJA3xEcXf0KM6GTJPugt2lgaom3D6g=";
   };
 
   mach-nix = import mach-nix-src {
-    pypiDataRev = "2385b06414a8406732bb8c0de86b20d17ca8c19d";
-    pypiDataSha256 = "sha256:1hixh41l3f232mgwmzsljdbyvyc0sdhvl8ph5s3f8cqbw2m4yny1";
+    #pypiDataRev = "315bd2515776ba3b70a05059c603df37e9669d12";
+    #pypiDataSha256 = "sha256:1a85adz40ibr6kfs3yz59qfypaylrsn1vmk3dj4fm2jbwhzakcg3";
     pkgs = final;
   };
 in
 {
+  inherit mach-nix;
+
   # ESP32C3
   gcc-riscv32-esp32c3-elf-bin = prev.callPackage ./pkgs/esp32c3-toolchain-bin.nix { };
   # ESP32
   gcc-xtensa-esp32-elf-bin = prev.callPackage ./pkgs/esp32-toolchain-bin.nix { };
   openocd-esp32-bin = prev.callPackage ./pkgs/openocd-esp32-bin.nix { };
 
-  esp-idf = prev.callPackage ./pkgs/esp-idf { inherit mach-nix; };
+  esp-coredump = prev.pythonPackages.callPackage ./pkgs/esp-coredump { inherit mach-nix; };
+  idf-component-manager = prev.pythonPackages.callPackage ./pkgs/idf-component-manager { inherit mach-nix; };
+  esp-idf = prev.callPackage ./pkgs/esp-idf { inherit mach-nix; inherit (final) idf-component-manager esp-coredump; };
 
   # ESP8266
   gcc-xtensa-lx106-elf-bin = prev.callPackage ./pkgs/esp8266-toolchain-bin.nix { };

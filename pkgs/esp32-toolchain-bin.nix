@@ -1,6 +1,6 @@
 # This version needs to be compatible with the version of ESP-IDF specified in `esp-idf/default.nix`.
-{ version ? "2021r1"
-, hash ? "sha256-RKC0Z7nSt1mrSLLyeu1oRYHzPJbihCmSeBxOBFmSxbA="
+{ version ? "2022r1-RC1"
+, hash ? "sha256-XaMd/mbul8DpQNgef6w/xgS7TL91KUop5tU4SuCBAtw"
 , stdenv
 , lib
 , fetchurl
@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
   inherit version;
 
   src = fetchurl {
-    url = "https://github.com/espressif/crosstool-NG/releases/download/esp-${version}/xtensa-esp32-elf-gcc8_4_0-esp-${version}-linux-amd64.tar.gz";
+    url = "https://github.com/espressif/crosstool-NG/releases/download/esp-${version}/xtensa-esp32-elf-gcc11_2_0-esp-${version}-linux-amd64.tar.xz";
     inherit hash;
   };
 
